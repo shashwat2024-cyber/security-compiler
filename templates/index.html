@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Compiler Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand-mark">SC</div>
+    <div>
+        <h1>Security Compiler <span class="pro-label">PRO</span></h1>
+        <p>Compiler pipeline and static security analysis</p>
+    </div>
+    <span class="status">LOCAL ANALYSIS</span>
+</header>
+
+<main class="container">
+    <section class="intro">
+        <p class="eyebrow">COMPILER DESIGN LAB</p>
+        <h2>Understand your code. Find risky data flows.</h2>
+        <p>Explore lexical analysis, syntax trees, intermediate code,
+           control-flow structure and security findings.</p>
+    </section>
+
+    <section class="panel">
+        <div class="panel-heading">
+            <div>
+                <h3>Source editor</h3>
+                <p>Enter a program in the supported C-like language.</p>
+            </div>
+            <button id="sampleButton" class="secondary">Load sample</button>
+        </div>
+
+        <textarea id="sourceCode" spellcheck="false"
+            aria-label="Source code" placeholder="Enter source code here...">void main() {
+    char buffer[8];
+    input = read_input();
+    copy = input;
+    strcpy(buffer, copy);
+}</textarea>
+
+        <div class="editor-footer">
+            <span id="charCount">0 characters</span>
+            <button id="analyzeButton" class="primary">Analyze program</button>
+        </div>
+    </section>
+
+    <section id="errorPanel" class="error hidden" role="alert"></section>
+
+    <section id="results" class="panel hidden">
+        <div class="panel-heading">
+            <div>
+                <h3>Analysis workspace</h3>
+                <p id="reportMessage">Analysis complete</p>
+            </div>
+            <button id="exportButton" class="secondary">Export JSON</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat"><span>Total findings</span><strong id="totalFindings">0</strong></div>
+            <div class="stat"><span>High severity</span><strong id="highFindings">0</strong></div>
+            <div class="stat"><span>Medium severity</span><strong id="mediumFindings">0</strong></div>
+            <div class="stat"><span>Low severity</span><strong id="lowFindings">0</strong></div>
+        </div>
+
+        <nav class="tabs" aria-label="Analysis views">
+            <button class="tab active" data-tab="security">Security report</button>
+            <button class="tab" data-tab="tokens">Tokens</button>
+            <button class="tab" data-tab="ast">AST explorer</button>
+            <button class="tab" data-tab="ir">Intermediate code</button>
+            <button class="tab" data-tab="graphs">Graphs</button>
+        </nav>
+
+        <section id="tab-security" class="tab-content">
+            <div class="filter-row">
+                <label for="severityFilter">Severity</label>
+                <select id="severityFilter">
+                    <option value="ALL">All findings</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                </select>
+                <label for="findingSearch">Search</label>
+                <input id="findingSearch" type="search" placeholder="Rule, sink or function">
+            </div>
+            <div id="findingsList"></div>
+        </section>
+
+        <section id="tab-tokens" class="tab-content hidden">
+            <h3>Lexical analysis</h3>
+            <p class="muted">Tokens produced by the lexer.</p>
+            <input id="tokenSearch" type="search" placeholder="Search token type or value">
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>#</th><th>Type</th><th>Value</th><th>Line</th></tr></thead>
+                    <tbody id="tokenRows"></tbody>
+                </table>
+            </div>
+            <p id="tokenCount" class="muted"></p>
+        </section>
+
+        <section id="tab-ast" class="tab-content hidden">
+            <h3>Abstract syntax tree</h3>
+            <p class="muted">Expand nodes to inspect the parsed program structure.</p>
+            <div id="astTree" class="tree-view"></div>
+        </section>
+
+        <section id="tab-ir" class="tab-content hidden">
+            <h3>Intermediate representation</h3>
+            <p class="muted">Instructions generated from the parsed program.</p>
+            <div id="irView"></div>
+        </section>
+
+        <section id="tab-graphs" class="tab-content hidden">
+            <h3>Control-flow graph</h3>
+            <p class="muted">Blocks and successors from the current sequential CFG.</p>
+            <div id="cfgView" class="graph-view"></div>
+            <h3>Function call graph</h3>
+            <p class="muted">Caller-to-callee relationships extracted from the AST.</p>
+            <div id="callGraphView" class="graph-view"></div>
+        </section>
+    </section>
+
+    <p class="disclaimer">
+        This tool analyzes a restricted C-like language. Findings are heuristic
+        warnings, not proof of exploitability. CFGs currently model sequential
+        execution only; conditional and loop control flow is not yet represented.
+    </p>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
